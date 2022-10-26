@@ -23,7 +23,7 @@ pipenv install -r requirements.txt
 ```
 6. Запускаем файл:  
 ```
-$ library.py
+$ python library.py
 ```
 ## Цели проекта
 
