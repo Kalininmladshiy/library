@@ -71,15 +71,9 @@ def parse_book_page(url):
 
     title_genres_comments = {
         'title': title.strip(),
-        'genres': [],
-        'comments': [],
+        'genres': [genre.text.replace(u'\xa0', u'') for genre in genres],
+        'comments': [comment.text.split(')')[1] for comment in comments],
      }
-    for comment in comments:
-        title_genres_comments['comments'].append(comment.text.split(')')[1])
-
-    genres = soup.find_all('span', class_='d_book')
-    for genre in genres:
-        title_genres_comments['genres'].append(genre.text.replace(u'\xa0', u''))
 
     return title_genres_comments, full_path_to_img, title.strip()
 
