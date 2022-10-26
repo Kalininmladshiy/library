@@ -124,19 +124,19 @@ if __name__ == '__main__':
     )    
     args = parser.parse_args()
 
-    for i in range(args.start_id, args.end_id + 1):
-        url_book = f'https://tululu.org/b{i}'
-        url_for_download = f"https://tululu.org/txt.php?id={i}"
-        if get_book_title(url_book):
-            filename = f'{i}.{get_book_title(url_book)}.txt'
+    for book_id in range(args.start_id, args.end_id + 1):
+        book_url = f'https://tululu.org/b{book_id}'
+        download_url = f"https://tululu.org/txt.php?id={book_id}"
+        if get_book_title(book_url):
+            filename = f'{book_id}.{get_book_title(book_url)}.txt'
             path_to_file = get_path_to_file(filename)
-            download_books(url_for_download, path_to_file)
-        if get_picture(url_book):
-            path_for_download_image = get_picture(url_book)
+            download_books(download_url, path_to_file)
+        if get_picture(book_url):
+            path_for_download_image = get_picture(book_url)
             if get_file_extension(path_for_download_image) != '.gif':
-                image_filename = f'{i}.{get_file_extension(path_for_download_image)}'
+                image_filename = f'{book_id}.{get_file_extension(path_for_download_image)}'
                 download_pictures(path_to_image, image_filename, path_for_download_image)
             else:
                 image_filename = 'nopic.gif'
                 download_pictures(path_to_image, image_filename, path_for_download_image)
-        print(parse_book_page(url_book))
+        print(parse_book_page(book_url))
