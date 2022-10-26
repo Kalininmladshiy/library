@@ -40,7 +40,7 @@ def get_file_extension(url):
     return file_extension
 
 
-def download_pictures(
+def download_picture(
     path_to_pictures,
     filename,
     url,
@@ -119,8 +119,8 @@ if __name__ == '__main__':
         if picture:
             if get_file_extension(picture) != '.gif':
                 image_filename = f'{book_id}.{get_file_extension(picture)}'
-                download_pictures(path_to_image, image_filename, picture)
+                download_picture(path_to_image, image_filename, picture)
             else:
                 image_filename = 'nopic.gif'
-                download_pictures(path_to_image, image_filename, picture)
+                download_picture(path_to_image, image_filename, picture)
         print(parse_book_page(book_url)[0])
