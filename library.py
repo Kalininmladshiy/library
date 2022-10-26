@@ -34,31 +34,6 @@ def get_path_to_file(filename, folder='books/'):
     return file_path
 
 
-def get_book_title(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    try:
-        check_for_redirect(response)
-    except:
-        return None
-    soup = BeautifulSoup(response.text, 'lxml')
-    title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
-    return title.strip()
-
-
-def get_picture(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    try:
-        check_for_redirect(response)
-    except:
-        return None    
-    soup = BeautifulSoup(response.text, 'lxml')
-    path = soup.find('div', class_='bookimage').find('img')['src']
-    full_path = urljoin(url, path)
-    return full_path
-
-
 def get_file_extension(url):
     url_parts = urlparse(url)
     path, file_extension = os.path.splitext(url_parts.path)
@@ -77,17 +52,25 @@ def download_pictures(
 
 
 def parse_book_page(url):
-    response = requests.get(url_book, verify=False)
+    response = requests.get(url, verify=False)
     response.raise_for_status()
     try:
         check_for_redirect(response)
     except:
         return None    
     soup = BeautifulSoup(response.text, 'lxml')
+
     comments = soup.find_all('div', class_='texts')
+
     genres = soup.find_all('span', class_='d_book')
+
+    path_to_img = soup.find('div', class_='bookimage').find('img')['src']
+    full_path_to_img = urljoin(url, path_to_img)
+
+    title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
+
     book_info = {
-        'title': get_book_title(url),
+        'title': title.strip(),
         'genres': [],
         'comments': [],
      }
@@ -98,7 +81,7 @@ def parse_book_page(url):
     for genre in genres:
         book_info['genres'].append(genre.text.replace(u'\xa0', u''))
 
-    return book_info
+    return book_info, full_path_to_img, title.strip()
 
 
 if __name__ == '__main__':
@@ -127,12 +110,12 @@ if __name__ == '__main__':
     for book_id in range(args.start_id, args.end_id + 1):
         book_url = f'https://tululu.org/b{book_id}'
         download_url = f"https://tululu.org/txt.php?id={book_id}"
-        title = get_book_title(book_url)
+        title = parse_book_page(book_url)[2]
         if title:
             filename = f'{book_id}.{title}.txt'
             path_to_file = get_path_to_file(filename)
             download_books(download_url, path_to_file)
-        picture = get_picture(book_url)
+        picture = parse_book_page(book_url)[1]
         if picture:
             if get_file_extension(picture) != '.gif':
                 image_filename = f'{book_id}.{get_file_extension(picture)}'
@@ -140,4 +123,4 @@ if __name__ == '__main__':
             else:
                 image_filename = 'nopic.gif'
                 download_pictures(path_to_image, image_filename, picture)
-        print(parse_book_page(book_url))
+        print(parse_book_page(book_url)[0])
