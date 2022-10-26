@@ -69,19 +69,19 @@ def parse_book_page(url):
 
     title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
 
-    book_info = {
+    title_genres_comments = {
         'title': title.strip(),
         'genres': [],
         'comments': [],
      }
     for comment in comments:
-        book_info['comments'].append(comment.text.split(')')[1])
+        title_genres_comments['comments'].append(comment.text.split(')')[1])
 
     genres = soup.find_all('span', class_='d_book')
     for genre in genres:
-        book_info['genres'].append(genre.text.replace(u'\xa0', u''))
+        title_genres_comments['genres'].append(genre.text.replace(u'\xa0', u''))
 
-    return book_info, full_path_to_img, title.strip()
+    return title_genres_comments, full_path_to_img, title.strip()
 
 
 if __name__ == '__main__':
