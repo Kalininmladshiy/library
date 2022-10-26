@@ -127,16 +127,17 @@ if __name__ == '__main__':
     for book_id in range(args.start_id, args.end_id + 1):
         book_url = f'https://tululu.org/b{book_id}'
         download_url = f"https://tululu.org/txt.php?id={book_id}"
-        if get_book_title(book_url):
-            filename = f'{book_id}.{get_book_title(book_url)}.txt'
+        title = get_book_title(book_url)
+        if title:
+            filename = f'{book_id}.{title}.txt'
             path_to_file = get_path_to_file(filename)
             download_books(download_url, path_to_file)
-        if get_picture(book_url):
-            path_for_download_image = get_picture(book_url)
-            if get_file_extension(path_for_download_image) != '.gif':
-                image_filename = f'{book_id}.{get_file_extension(path_for_download_image)}'
-                download_pictures(path_to_image, image_filename, path_for_download_image)
+        picture = get_picture(book_url)
+        if picture:
+            if get_file_extension(picture) != '.gif':
+                image_filename = f'{book_id}.{get_file_extension(picture)}'
+                download_pictures(path_to_image, image_filename, picture)
             else:
                 image_filename = 'nopic.gif'
-                download_pictures(path_to_image, image_filename, path_for_download_image)
+                download_pictures(path_to_image, image_filename, picture)
         print(parse_book_page(book_url))
