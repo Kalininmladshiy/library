@@ -125,10 +125,9 @@ if __name__ == '__main__':
         if url_to_img:
             if get_file_extension(full_url_to_img) != '.gif':
                 image_filename = f'{book_id}.{get_file_extension(full_url_to_img)}'
-                download_picture(path_to_image, image_filename, full_url_to_img)
             else:
                 image_filename = 'nopic.gif'
-                download_picture(path_to_image, image_filename, full_url_to_img)
+            download_picture(path_to_image, image_filename, full_url_to_img)
         print(book_information['title'])
         print(book_information['genres'])
         print(book_information['comments'])
