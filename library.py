@@ -12,7 +12,7 @@ from urllib.parse import urljoin, urlparse
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def download_books(response, path_to_file):
+def download_book(response, path_to_file):
     with open(Path() / path_to_file, 'wb') as file:
         file.write(response.content)
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
                 check_for_redirect(response_from_download_page)
             except:
                 continue            
-            download_books(response_from_download_page, path_to_file)
+            download_book(response_from_download_page, path_to_file)
 
         full_url_to_img = urljoin(book_url, url_to_img)
         if url_to_img:
