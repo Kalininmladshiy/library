@@ -105,29 +105,31 @@ if __name__ == '__main__':
         book_information = parse_book_page(response)
         title = book_information['title']
         url_to_img = book_information['url_to_image']
-        if title:
-            payload = {'id': book_id}
-            filename = f'{book_id}.{title}.txt'
-            path_to_file = get_path_to_file(filename)
-            download_book_response = requests.get(
-                download_url,
-                params=payload,
-                verify=False
-             )
-            download_book_response.raise_for_status()
-            try:
-                check_for_redirect(download_book_response)
-            except:
-                continue            
-            download_book(download_book_response, path_to_file)
+
+        payload = {'id': book_id}
+        filename = f'{book_id}.{title}.txt'
+        path_to_file = get_path_to_file(filename)
+        download_book_response = requests.get(
+            download_url,
+            params=payload,
+            verify=False
+         )
+        download_book_response.raise_for_status()
+        try:
+            check_for_redirect(download_book_response)
+        except:
+            continue            
+        download_book(download_book_response, path_to_file)
 
         full_url_to_img = urljoin(book_url, url_to_img)
-        if url_to_img:
+        if not url_to_img:
+            continue
+        else:
             if get_file_extension(full_url_to_img) != '.gif':
                 image_filename = f'{book_id}.{get_file_extension(full_url_to_img)}'
             else:
                 image_filename = 'nopic.gif'
-            download_picture(path_to_image, image_filename, full_url_to_img)
+        download_picture(path_to_image, image_filename, full_url_to_img)
         print(book_information['title'])
         print(book_information['genres'])
         print(book_information['comments'])
