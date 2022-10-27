@@ -52,17 +52,18 @@ def parse_book_page(response):
 
     genres = soup.find_all('span', class_='d_book')
 
-    path_to_img = soup.find('div', class_='bookimage').find('img')['src']
+    url_to_img = soup.find('div', class_='bookimage').find('img')['src']
 
     title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
 
-    title_genres_comments = {
+    book_information = {
         'title': title.strip(),
         'genres': [genre.text.replace(u'\xa0', u'') for genre in genres],
         'comments': [comment.text.split(')')[1] for comment in comments],
+        'url_to_image': url_to_img
      }
 
-    return title_genres_comments, path_to_img, title.strip()
+    return book_information
 
 
 if __name__ == '__main__':
@@ -101,7 +102,9 @@ if __name__ == '__main__':
             check_for_redirect(response)
         except:
             continue        
-        title_genres_comments, url_to_img, title = parse_book_page(response)
+        book_information = parse_book_page(response)
+        title = book_information['title']
+        url_to_img = book_information['url_to_image']
         if title:
             payload = {'id': book_id}
             filename = f'{book_id}.{title}.txt'
@@ -126,4 +129,7 @@ if __name__ == '__main__':
             else:
                 image_filename = 'nopic.gif'
                 download_picture(path_to_image, image_filename, full_url_to_img)
-        print(title_genres_comments)
+        print(book_information['title'])
+        print(book_information['genres'])
+        print(book_information['comments'])
+        print()
