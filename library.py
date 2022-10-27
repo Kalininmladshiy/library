@@ -2,6 +2,7 @@ import requests
 import urllib3
 import os
 import argparse
+import time
 from pathlib import Path
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename, sanitize_filepath
@@ -94,43 +95,52 @@ if __name__ == '__main__':
     download_url = f"https://tululu.org/txt.php"
 
     for book_id in range(args.start_id, args.end_id + 1):
-        book_url = f'https://tululu.org/b{book_id}'
 
-        response = requests.get(book_url, verify=False)
-        response.raise_for_status()        
         try:
-            check_for_redirect(response)
-        except:
-            continue        
-        book_information = parse_book_page(response)
-        title = book_information['title']
-        url_to_img = book_information['url_to_image']
+            book_url = f'https://tululu.org/b{book_id}'
 
-        payload = {'id': book_id}
-        filename = f'{book_id}.{title}.txt'
-        path_to_file = get_path_to_file(filename)
-        download_book_response = requests.get(
-            download_url,
-            params=payload,
-            verify=False
-         )
-        download_book_response.raise_for_status()
-        try:
-            check_for_redirect(download_book_response)
-        except:
-            continue            
-        download_book(download_book_response, path_to_file)
+            response = requests.get(book_url, verify=False)
+            response.raise_for_status()        
+            try:
+                check_for_redirect(response)
+            except:
+                continue        
+            book_information = parse_book_page(response)
+            title = book_information['title']
+            url_to_img = book_information['url_to_image']
 
-        full_url_to_img = urljoin(book_url, url_to_img)
-        if not url_to_img:
-            continue
-        else:
-            if get_file_extension(full_url_to_img) != '.gif':
-                image_filename = f'{book_id}.{get_file_extension(full_url_to_img)}'
+            payload = {'id': book_id}
+            filename = f'{book_id}.{title}.txt'
+            path_to_file = get_path_to_file(filename)
+            download_book_response = requests.get(
+                download_url,
+                params=payload,
+                verify=False
+             )
+            download_book_response.raise_for_status()
+            try:
+                check_for_redirect(download_book_response)
+            except:
+                continue            
+            download_book(download_book_response, path_to_file)
+
+            full_url_to_img = urljoin(book_url, url_to_img)
+            if not url_to_img:
+                continue
             else:
-                image_filename = 'nopic.gif'
-        download_picture(path_to_image, image_filename, full_url_to_img)
-        print(book_information['title'])
-        print(book_information['genres'])
-        print(book_information['comments'])
-        print()
+                if get_file_extension(full_url_to_img) != '.gif':
+                    image_filename = f'{book_id}.{get_file_extension(full_url_to_img)}'
+                else:
+                    image_filename = 'nopic.gif'
+            download_picture(path_to_image, image_filename, full_url_to_img)
+            print(book_information['title'])
+            print(book_information['genres'])
+            print(book_information['comments'])
+            print()
+        except requests.exceptions.ConnectionError:
+            print('Произошел разрыв сетевого соединения. Ожидаем 10 минут.')
+            time.sleep(600)
+            continue
+        except requests.exceptions.HTTPError as e:
+            print(f'Что-то с адресом страницы: {e}')
+            continue
