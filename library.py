@@ -106,17 +106,17 @@ if __name__ == '__main__':
             payload = {'id': book_id}
             filename = f'{book_id}.{title}.txt'
             path_to_file = get_path_to_file(filename)
-            response_from_download_page = requests.get(
+            download_book_response = requests.get(
                 download_url,
                 params=payload,
                 verify=False
              )
-            response_from_download_page.raise_for_status()
+            download_book_response.raise_for_status()
             try:
-                check_for_redirect(response_from_download_page)
+                check_for_redirect(download_book_response)
             except:
                 continue            
-            download_book(response_from_download_page, path_to_file)
+            download_book(download_book_response, path_to_file)
 
         full_url_to_img = urljoin(book_url, url_to_img)
         if url_to_img:
