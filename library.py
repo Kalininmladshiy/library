@@ -12,9 +12,7 @@ from urllib.parse import urljoin, urlparse
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def download_books(url, path_to_file):
-    response = requests.get(url, verify=False)
-    response.raise_for_status()
+def download_books(response, path_to_file):
     try:
         check_for_redirect(response)
     except:
@@ -51,9 +49,7 @@ def download_picture(
         file.write(response.content)
 
 
-def parse_book_page(url):
-    response = requests.get(url, verify=False)
-    response.raise_for_status()
+def parse_book_page(response):
     try:
         check_for_redirect(response)
     except:
@@ -65,7 +61,6 @@ def parse_book_page(url):
     genres = soup.find_all('span', class_='d_book')
 
     path_to_img = soup.find('div', class_='bookimage').find('img')['src']
-    full_path_to_img = urljoin(url, path_to_img)
 
     title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
 
@@ -75,14 +70,16 @@ def parse_book_page(url):
         'comments': [comment.text.split(')')[1] for comment in comments],
      }
 
-    return title_genres_comments, full_path_to_img, title.strip()
+    return title_genres_comments, path_to_img, title.strip()
 
 
 if __name__ == '__main__':
     path_to_books = Path.cwd() / 'books'
     path_to_image = Path.cwd() / 'images'
+    
     Path(path_to_books).mkdir(parents=True, exist_ok=True)
     Path(path_to_image).mkdir(parents=True, exist_ok=True)
+    
     parser = argparse.ArgumentParser(
         description='Программа для парсинга информации о книге'
     )
@@ -101,20 +98,34 @@ if __name__ == '__main__':
     )    
     args = parser.parse_args()
 
+    download_url = f"https://tululu.org/txt.php"
+
     for book_id in range(args.start_id, args.end_id + 1):
         book_url = f'https://tululu.org/b{book_id}'
-        download_url = f"https://tululu.org/txt.php?id={book_id}"
-        title = parse_book_page(book_url)[2]
+
+        response = requests.get(book_url, verify=False)
+        response.raise_for_status()        
+
+        title = parse_book_page(response)[2]
         if title:
+            payload = {'id': book_id}
             filename = f'{book_id}.{title}.txt'
             path_to_file = get_path_to_file(filename)
-            download_books(download_url, path_to_file)
-        picture = parse_book_page(book_url)[1]
-        if picture:
-            if get_file_extension(picture) != '.gif':
-                image_filename = f'{book_id}.{get_file_extension(picture)}'
-                download_picture(path_to_image, image_filename, picture)
+            response_from_download_page = requests.get(
+                download_url,
+                params=payload,
+                verify=False
+             )
+            response_from_download_page.raise_for_status()
+            download_books(response_from_download_page, path_to_file)
+
+        url_to_img = parse_book_page(response)[1]
+        full_url_to_img = urljoin(book_url, url_to_img)
+        if url_to_img:
+            if get_file_extension(full_url_to_img) != '.gif':
+                image_filename = f'{book_id}.{get_file_extension(full_url_to_img)}'
+                download_picture(path_to_image, image_filename, full_url_to_img)
             else:
                 image_filename = 'nopic.gif'
-                download_picture(path_to_image, image_filename, picture)
-        print(parse_book_page(book_url)[0])
+                download_picture(path_to_image, image_filename, full_url_to_img)
+        print(parse_book_page(response)[0])
