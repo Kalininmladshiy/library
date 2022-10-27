@@ -13,10 +13,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def download_books(response, path_to_file):
-    try:
-        check_for_redirect(response)
-    except:
-        return None
     with open(Path() / path_to_file, 'wb') as file:
         file.write(response.content)
 
@@ -50,10 +46,6 @@ def download_picture(
 
 
 def parse_book_page(response):
-    try:
-        check_for_redirect(response)
-    except:
-        return None    
     soup = BeautifulSoup(response.text, 'lxml')
 
     comments = soup.find_all('div', class_='texts')
@@ -105,8 +97,11 @@ if __name__ == '__main__':
 
         response = requests.get(book_url, verify=False)
         response.raise_for_status()        
-
-        title = parse_book_page(response)[2]
+        try:
+            check_for_redirect(response)
+        except:
+            continue        
+        title_genres_comments, url_to_img, title = parse_book_page(response)
         if title:
             payload = {'id': book_id}
             filename = f'{book_id}.{title}.txt'
@@ -117,9 +112,12 @@ if __name__ == '__main__':
                 verify=False
              )
             response_from_download_page.raise_for_status()
+            try:
+                check_for_redirect(response_from_download_page)
+            except:
+                continue            
             download_books(response_from_download_page, path_to_file)
 
-        url_to_img = parse_book_page(response)[1]
         full_url_to_img = urljoin(book_url, url_to_img)
         if url_to_img:
             if get_file_extension(full_url_to_img) != '.gif':
@@ -128,4 +126,4 @@ if __name__ == '__main__':
             else:
                 image_filename = 'nopic.gif'
                 download_picture(path_to_image, image_filename, full_url_to_img)
-        print(parse_book_page(response)[0])
+        print(title_genres_comments)
