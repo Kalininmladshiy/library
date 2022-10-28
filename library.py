@@ -108,11 +108,10 @@ if __name__ == '__main__':
             response = requests.get(book_url, verify=False)
             response.raise_for_status()
             download_book_response.raise_for_status()
-            try:
-                check_for_redirect(response)
-                check_for_redirect(download_book_response)
-            except:
-                continue        
+
+            check_for_redirect(response)
+            check_for_redirect(download_book_response)
+
             book = parse_book_page(response)
             title = book['title']
             img_url = book['img_url']
