@@ -127,11 +127,10 @@ if __name__ == '__main__':
             full_img_url = urljoin(book_url, img_url)
             if not img_url:
                 continue
+            if get_file_extension(full_img_url) != '.gif':
+                image_filename = f'{book_id}.{get_file_extension(full_img_url)}'
             else:
-                if get_file_extension(full_img_url) != '.gif':
-                    image_filename = f'{book_id}.{get_file_extension(full_img_url)}'
-                else:
-                    image_filename = 'nopic.gif'
+                image_filename = 'nopic.gif'
             download_picture(path_to_image, image_filename, full_img_url)
             print(book['title'])
             print(book['genres'])
