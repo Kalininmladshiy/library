@@ -57,14 +57,14 @@ def parse_book_page(response):
 
     title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
 
-    book_information = {
+    book = {
         'title': title.strip(),
         'genres': [genre.text.replace(u'\xa0', u'') for genre in genres],
         'comments': [comment.text.split(')')[1] for comment in comments],
         'url_to_image': url_to_img
      }
 
-    return book_information
+    return book
 
 
 if __name__ == '__main__':
@@ -105,9 +105,9 @@ if __name__ == '__main__':
                 check_for_redirect(response)
             except:
                 continue        
-            book_information = parse_book_page(response)
-            title = book_information['title']
-            url_to_img = book_information['url_to_image']
+            book = parse_book_page(response)
+            title = book['title']
+            url_to_img = book['url_to_image']
 
             payload = {'id': book_id}
             filename = f'{book_id}.{title}.txt'
@@ -133,9 +133,9 @@ if __name__ == '__main__':
                 else:
                     image_filename = 'nopic.gif'
             download_picture(path_to_image, image_filename, full_url_to_img)
-            print(book_information['title'])
-            print(book_information['genres'])
-            print(book_information['comments'])
+            print(book['title'])
+            print(book['genres'])
+            print(book['comments'])
             print()
         except requests.exceptions.ConnectionError:
             print('Произошел разрыв сетевого соединения. Ожидаем 10 минут.')
