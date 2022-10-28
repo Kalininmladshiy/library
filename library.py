@@ -98,30 +98,27 @@ if __name__ == '__main__':
 
         try:
             book_url = f'https://tululu.org/b{book_id}'
+            payload = {'id': book_id}
 
+            download_book_response = requests.get(
+                download_url,
+                params=payload,
+                verify=False
+             )
             response = requests.get(book_url, verify=False)
-            response.raise_for_status()        
+            response.raise_for_status()
+            download_book_response.raise_for_status()
             try:
                 check_for_redirect(response)
+                check_for_redirect(download_book_response)
             except:
                 continue        
             book = parse_book_page(response)
             title = book['title']
             img_url = book['img_url']
 
-            payload = {'id': book_id}
             filename = f'{book_id}.{title}.txt'
             path_to_file = get_path_to_file(filename)
-            download_book_response = requests.get(
-                download_url,
-                params=payload,
-                verify=False
-             )
-            download_book_response.raise_for_status()
-            try:
-                check_for_redirect(download_book_response)
-            except:
-                continue            
             download_book(download_book_response, path_to_file)
 
             full_img_url = urljoin(book_url, img_url)
