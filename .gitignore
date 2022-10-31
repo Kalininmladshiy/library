@@ -1,6 +1,7 @@
 /.idea
 *.sqlite3
 *.env
+*.json
 test.py
 /images/
 /image/
