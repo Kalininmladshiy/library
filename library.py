@@ -78,28 +78,28 @@ if __name__ == '__main__':
     Path(path_to_books).mkdir(parents=True, exist_ok=True)
     Path(path_to_image).mkdir(parents=True, exist_ok=True)
     books = []
-    #parser = argparse.ArgumentParser(
-        #description='Программа для парсинга информации о книге'
-    #)
-    #parser.add_argument(
-        #"--start_id",
-        #help="id книги с которой хотим начать парсинг",
-        #type=int,
-        #default=1,
-    #)
+    parser = argparse.ArgumentParser(
+        description='Программа для скачивания книг из категории "фантастика"'
+    )
+    parser.add_argument(
+        "--start_id",
+        help="id страницы категории с которой хотим начать скачивание",
+        type=int,
+        default=1,
+    )
     
-    #parser.add_argument(
-        #"--end_id",
-        #help="id книги которой хотим закончить парсинг",
-        #type=int,
-        #default=10,
-    #)    
-    #args = parser.parse_args()
+    parser.add_argument(
+        "--end_id",
+        help="id страницы категории которой хотим закончить скачивание",
+        type=int,
+        default=701,
+    )    
+    args = parser.parse_args()
 
     download_url = f"https://tululu.org/txt.php"
     book_url = 'https://tululu.org'
 
-    for page_number in range(1, 2):
+    for page_number in range(args.start_id, args.end_id + 1):
         category_url = f'https://tululu.org/l55/{page_number}/'
         response = requests.get(category_url, verify=False)
         response.raise_for_status()
