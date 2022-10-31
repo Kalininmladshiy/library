@@ -49,12 +49,14 @@ def download_picture(
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
+    
+    comments_selector = '.texts'
+    genres_selector = 'span.d_book'
+    img_url_selector = '.bookimage img'
 
-    comments = soup.find_all('div', class_='texts')
-
-    genres = soup.find_all('span', class_='d_book')
-
-    img_url = soup.find('div', class_='bookimage').find('img')['src']
+    comments = soup.select(comments_selector)
+    genres = soup.select(genres_selector)
+    img_url = soup.select_one(img_url_selector)['src']
 
     title, author = soup.find('h1').text.replace(u'\xa0', u'').split("::")
 
@@ -63,7 +65,7 @@ def parse_book_page(response):
         'author': author.strip(),
         'genres': [genre.text.replace(u'\xa0', u'') for genre in genres],
         'comments': [comment.text.split(')')[1] for comment in comments],
-        'img_url': img_url
+        'img_url': img_url,
      }
 
     return book
@@ -102,8 +104,9 @@ if __name__ == '__main__':
         response = requests.get(category_url, verify=False)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'lxml')
-        books_path = soup.find_all('table', class_='d_book')    
-    
+        books_selector = 'table.d_book'
+        books_path = soup.select(books_selector)
+
         for book_path in books_path:
     
             try:
@@ -154,4 +157,4 @@ if __name__ == '__main__':
                 continue
 
     with open('books.json', 'w', encoding='utf8') as json_file:
-        json.dump(books, json_file, ensure_ascii=False, indent=4)    
+        json.dump(books, json_file, ensure_ascii=False, indent=4)
