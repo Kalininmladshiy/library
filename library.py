@@ -69,7 +69,7 @@ def parse_book_page(response):
     return book
 
 
-if __name__ == '__main__':
+def creat_argumets():
     parser = argparse.ArgumentParser(
         description='Программа для скачивания книг из категории "фантастика"'
     )
@@ -110,7 +110,11 @@ if __name__ == '__main__':
         help="указать свой путь к *.json файлу с результатами",
         default=Path.cwd(),
     )
+    return parser
 
+
+if __name__ == '__main__':
+    parser = creat_argumets()
     args = parser.parse_args()
 
     path_to_books = args.dest_folder / 'books'
