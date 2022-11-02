@@ -140,10 +140,18 @@ if __name__ == '__main__':
     book_url = 'https://tululu.org'
 
     for page_number in range(args.start_id, args.end_id + 1):
-        category_url = f'https://tululu.org/l55/{page_number}/'
-        response = requests.get(category_url, verify=False)
-        response.raise_for_status()
-        check_for_redirect(response)
+        try:
+            category_url = f'https://tululu.org/l55/{page_number}/'
+            response = requests.get(category_url, verify=False)
+            response.raise_for_status()
+            check_for_redirect(response)
+        except requests.exceptions.ConnectionError:
+            print('Произошел разрыв сетевого соединения. Ожидаем 1 минуту.')
+            time.sleep(60)
+            continue
+        except requests.exceptions.HTTPError as e:
+            print(f'Что-то с адресом страницы: {e}')
+            continue        
         books_path = get_books_path(response)
 
         for book_path in books_path:
