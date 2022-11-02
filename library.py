@@ -143,6 +143,7 @@ if __name__ == '__main__':
         category_url = f'https://tululu.org/l55/{page_number}/'
         response = requests.get(category_url, verify=False)
         response.raise_for_status()
+        check_for_redirect(response)
         books_path = get_books_path(response)
 
         for book_path in books_path:
