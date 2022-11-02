@@ -118,6 +118,13 @@ def create_dirs(*paths):
         Path(path).mkdir(parents=True, exist_ok=True)
 
 
+def get_books_path(response):
+    soup = BeautifulSoup(response.text, 'lxml')
+    books_selector = 'table.d_book'
+    books_path = soup.select(books_selector)
+    return books_path
+
+
 if __name__ == '__main__':
     parser = create_argumets()
     args = parser.parse_args()
@@ -136,9 +143,7 @@ if __name__ == '__main__':
         category_url = f'https://tululu.org/l55/{page_number}/'
         response = requests.get(category_url, verify=False)
         response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'lxml')
-        books_selector = 'table.d_book'
-        books_path = soup.select(books_selector)
+        books_path = get_books_path(response)
 
         for book_path in books_path:
 
