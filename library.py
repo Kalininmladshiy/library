@@ -149,7 +149,7 @@ if __name__ == '__main__':
         for book_path in books_path:
 
             try:
-                full_book_url = urljoin(book_url, book_path('a')[0]['href'])
+                full_book_url = urljoin(category_url, book_path('a')[0]['href'])
                 book_id = book_path('a')[0]['href'][2:-1]
                 response = requests.get(full_book_url, verify=False)
                 response.raise_for_status()
