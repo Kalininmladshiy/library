@@ -69,7 +69,7 @@ def parse_book_page(response):
     return book
 
 
-def creat_argumets():
+def create_argumets():
     parser = argparse.ArgumentParser(
         description='Программа для скачивания книг из категории "фантастика"'
     )
@@ -113,16 +113,20 @@ def creat_argumets():
     return parser
 
 
+def create_dirs(*paths):
+    for path in paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+
 if __name__ == '__main__':
-    parser = creat_argumets()
+    parser = create_argumets()
     args = parser.parse_args()
 
     path_to_books = args.dest_folder / 'books'
     path_to_image = args.dest_folder / 'images'
     path_to_json = args.json_path
 
-    Path(path_to_books).mkdir(parents=True, exist_ok=True)
-    Path(path_to_image).mkdir(parents=True, exist_ok=True)
+    create_dirs(path_to_books, path_to_image)
     books = []
 
     download_url = "https://tululu.org/txt.php"
