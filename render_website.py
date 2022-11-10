@@ -2,6 +2,7 @@ import json
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server, shell
+from more_itertools import chunked
 
 
 
@@ -24,13 +25,10 @@ if __name__ == '__main__':
     with open("books.json", "r") as file:
         books_json = file.read()
     
-    books = json.loads(books_json)
-    
-    #server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-    #server.serve_forever()
-    
+    books = list(chunked(json.loads(books_json), 2))
+        
     on_reload()
 
     server = Server()
     server.watch('template.html', on_reload)
-    server.serve(root='.')    
+    server.serve(root='.')
