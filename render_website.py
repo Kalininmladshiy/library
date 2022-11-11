@@ -17,7 +17,7 @@ def on_reload():
     
     template = env.get_template('template.html')
     
-    folder_books = Path(Path.cwd() / 'pages' / 'books')
+    folder_books = Path(Path.cwd() / 'books')
     files_in_folder_books = len(list(folder_books.iterdir()))
     pages_count =  math.ceil(files_in_folder_books / 20)
     
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     server = Server()
     server.watch('template.html', on_reload)
-    server.serve(root='pages', default_filename='index1.html')
+    server.serve(root='.', default_filename='pages/index1.html')
 
 
     #server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
