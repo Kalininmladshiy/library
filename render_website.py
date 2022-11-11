@@ -1,4 +1,5 @@
 import json
+import math
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server, shell
@@ -16,9 +17,18 @@ def on_reload():
     
     template = env.get_template('template.html')
     
-    for number_page, books_on_pages in enumerate(books_2, 1):
+    folder_books = Path(Path.cwd() / 'pages' / 'books')
+    files_in_folder_books = len(list(folder_books.iterdir()))
+    pages_count =  math.ceil(files_in_folder_books / 20)
+    
+    
+    for number_page, books_on_pages in enumerate(books, 1):
         books_on_pages = list(chunked(books_on_pages, 2))
-        rendered_page = template.render(books_on_pages=books_on_pages)
+        rendered_page = template.render(
+            books_on_pages=books_on_pages,
+            number_page=number_page,
+            pages_count=pages_count,
+         )
     
         with open(Path.cwd() / 'pages' / f'index{number_page}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
@@ -45,11 +55,14 @@ if __name__ == '__main__':
     with open("books.json", "r") as file:
         books_json = file.read()
     
-    #books = list(chunked(json.loads(books_json), 2))
-    books_2 = list(chunked(json.loads(books_json), 20))
+    books = list(chunked(json.loads(books_json), 20))
         
     on_reload()
 
     server = Server()
     server.watch('template.html', on_reload)
-    server.serve(root='.')
+    server.serve(root='pages', default_filename='index1.html')
+
+
+    #server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    #server.serve_forever()

@@ -2,6 +2,8 @@
 *.sqlite3
 *.env
 *.json
+pages/books
+pages/images
 test.py
 /images/
 /image/
