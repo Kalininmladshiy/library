@@ -14,33 +14,31 @@ def on_reload():
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
      )
-    
+
     template = env.get_template('template.html')
-    
+
     folder_books = Path(Path.cwd() / 'books')
     files_in_folder_books = len(list(folder_books.iterdir()))
     pages_count =  math.ceil(files_in_folder_books / 20)
-    
-    
+
     for number_page, books_on_pages in enumerate(books, 1):
+        if number_page == 1:
+            pagination_pages = [i for i in range(1, 4)]
+        elif number_page == pages_count:
+            pagination_pages = [i for i in range(pages_count - 2, pages_count + 1)]
+        else:
+            pagination_pages = [i for i in range(number_page - 1, number_page + 2)]
         books_on_pages = list(chunked(books_on_pages, 2))
         rendered_page = template.render(
             books_on_pages=books_on_pages,
             number_page=number_page,
+            pagination_pages=pagination_pages,
             pages_count=pages_count,
          )
-    
+
         with open(Path.cwd() / 'pages' / f'index{number_page}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
-
-
-
-    #rendered_page = template.render(books=books)
-    
-    #with open('index.html', 'w', encoding="utf8") as file:
-        #file.write(rendered_page)
-    
 
 def create_dirs(*paths):
     for path in paths:
@@ -54,7 +52,7 @@ if __name__ == '__main__':
 
     with open("books.json", "r") as file:
         books_json = file.read()
-    
+
     books = list(chunked(json.loads(books_json), 20))
         
     on_reload()
@@ -62,7 +60,3 @@ if __name__ == '__main__':
     server = Server()
     server.watch('template.html', on_reload)
     server.serve(root='.', default_filename='pages/index1.html')
-
-
-    #server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-    #server.serve_forever()

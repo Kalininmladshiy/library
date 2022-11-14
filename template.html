@@ -12,13 +12,13 @@
     <link rel="icon" type="image/png" href="/static/lg.png" sizes="16x16">  
         
           <nav aria-label="Page navigation example">
-            <ul class="pagination px-5 mt-4">
+            <ul class="pagination justify-content-center px-5 mt-4">
               {% if number_page == 1 %}
 	        <li class="page-item disabled"><a class="page-link" href="/pages/index{{number_page - 1}}.html">&lsaquo; Назад</a></li>
 	      {% else %}
 	        <li class="page-item"><a class="page-link" href="/pages/index{{number_page - 1}}.html">&lsaquo; Назад</a></li>
 	      {% endif %}  
-	        {% for page in range(1, pages_count+1) %}
+	        {% for page in pagination_pages %}
 	          {% if number_page == page %}
 	            <li class="page-item active"><a class="page-link" href="/pages/index{{page}}.html">{{page}}</a></li>
 	          {% else %}
