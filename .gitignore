@@ -2,12 +2,7 @@
 *.sqlite3
 *.env
 *.json
-pages/books
-pages/images
 test.py
-/images/
-/image/
-/books/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
