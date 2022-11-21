@@ -23,6 +23,7 @@ def on_reload():
     column_amount = 2
 
     for number_page, books_on_pages in enumerate(books, 1):
+        title = f'{number_page} - страница'
         if number_page == 1:
             pagination_pages = [i for i in range(number_page, number_page + 3)]
         elif number_page == pages_count:
@@ -35,6 +36,7 @@ def on_reload():
             number_page=number_page,
             pagination_pages=pagination_pages,
             pages_count=pages_count,
+            title=title
          )
 
         with open(Path.cwd() / 'pages' / f'index{number_page}.html', 'w', encoding="utf8") as file:
