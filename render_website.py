@@ -24,17 +24,10 @@ def on_reload():
 
     for number_page, books_on_pages in enumerate(books, 1):
         title = f'{number_page} - страница'
-        if number_page == 1:
-            pagination_pages = [i for i in range(number_page, number_page + 3)]
-        elif number_page == pages_count:
-            pagination_pages = [i for i in range(pages_count - 2, pages_count + 1)]
-        else:
-            pagination_pages = [i for i in range(number_page - 1, number_page + 2)]
         books_on_pages = list(chunked(books_on_pages, column_amount))
         rendered_page = template.render(
             books_on_pages=books_on_pages,
             number_page=number_page,
-            pagination_pages=pagination_pages,
             pages_count=pages_count,
             title=title
          )
