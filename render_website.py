@@ -17,9 +17,9 @@ def on_reload():
 
     template = env.get_template('template.html')
 
-    folder_books = Path(Path.cwd() / 'books')
-    files_in_folder_books = len(list(folder_books.iterdir()))
-    pages_count =  math.ceil(files_in_folder_books / books_on_page)
+    book_folder = Path(Path.cwd() / 'books')
+    files_in_book_folder = len(list(book_folder.iterdir()))
+    pages_count =  math.ceil(files_in_book_folder / books_on_page)
     column_amount = 2
 
     for number_page, books_on_pages in enumerate(books, 1):
