@@ -49,7 +49,7 @@ def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
 
     comments_selector = '.texts'
-    genres_selector = 'span.d_book'
+    genres_selector = 'span.d_book a'
     img_url_selector = '.bookimage img'
 
     comments = soup.select(comments_selector)
@@ -61,7 +61,7 @@ def parse_book_page(response):
     book = {
         'title': title.strip(),
         'author': author.strip(),
-        'genres': [genre.text.replace(u'\xa0', u'') for genre in genres],
+        'genres': [genre.text for genre in genres],
         'comments': [comment.text.split(')')[1] for comment in comments],
         'img_url': img_url,
      }
