@@ -23,13 +23,11 @@ def on_reload():
     column_amount = 2
 
     for number_page, books_on_pages in enumerate(books, 1):
-        title = f'{number_page} - страница'
         books_on_pages = list(chunked(books_on_pages, column_amount))
         rendered_page = template.render(
             books_on_pages=books_on_pages,
             number_page=number_page,
             pages_count=pages_count,
-            title=title
          )
 
         with open(Path.cwd() / 'pages' / f'index{number_page}.html', 'w', encoding="utf8") as file:
